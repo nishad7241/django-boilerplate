@@ -31,7 +31,8 @@
         DB_HOST = localhost
         DB_PORT = 5432
     )
-    * python manage.py runserver
+    * python manage.py runserver (default port 8000)
+    * python manage.py runserver 0.0.0.0:<your_port> (Start the app - custom port)
     * python manage.py makemigrations && python manage.py migrate 
     * python manage.py createsuperuser (To Create super user)
     * To open python shell (To open python shell)
@@ -85,3 +86,96 @@
         STATIC_FILE_ROOT = BASE_DIR / 'static'
         STATICFILES_DIRS = (BASE_DIR / 'static',)
         STATIC_ROOT = (BASE_DIR / 'static'/'static_files')
+
+# Configure mail urls.py
+
+    *   from django.contrib import admin
+        from django.urls import include, path, re_path
+        from django.conf import settings as SETTINGS
+        from django.conf.urls.static import static
+
+
+        urlpatterns = [
+            path('realestate-admin/', admin.site.urls),
+
+            path('core/', include(('core.urls', 'core'), namespace='core')),
+
+        ] + static(SETTINGS.STATIC_URL, document_root=SETTINGS.STATIC_ROOT) + static(SETTINGS.MEDIA_URL, document_root=SETTINGS.MEDIA_ROOT)
+
+# static_files directory, from where django-admin collectstatic will collect the static files.
+
+    *   |---django_project
+        |   |   | ...
+        |   |   | ...
+        |   |   |static_files (all static files we use in development)
+        |   |   |---base (project as a whole specific static files)
+        |   |   |   |---css
+        |   |   |   |---img
+        |   |   |   |---js
+        |   |   |---core (my custom app specific)
+        |   |   |   |---css
+        |   |   |   |---img
+        |   |   |   |---js
+        |   |   | ...
+        |   |   | ...
+
+# templates directory as follows:
+
+    *   |---django_project
+        |   |   | ...
+        |   |   | ...
+        |   |---templates
+        |   |   |---core (custom app specific)
+        |   |   |---<other app specific templates>
+        |   |   |---base.html (included basics of jquery and bootstrap)
+        |   |   | ...
+        |   |   | ...
+
+# Overall folder structure used in this architecture is as follows:
+
+    *   django_boilerplate
+        |
+        |---assets (folder created once static files are collected)
+        |
+        |---django_boilerplate
+        |   |---apps
+        |   |   |---core (custom app)
+        |   |   |---...<other apps>...
+        |   |   |---urls.py
+        |   |
+        |   |---config
+        |   |   |---settings
+        |   |   |   |---base.py
+        |   |   |   |---settings.ini (ignored by git)
+        |   |   |
+        |   |   |---asgi.py
+        |   |   |---urls.py
+        |   |   |---wsgi.py
+        |   |   |
+        |   |   |static_files (all static files we use in development)
+        |   |   |---base (project as a whole specific static files)
+        |   |   |   |---css
+        |   |   |   |---img
+        |   |   |   |---js
+        |   |   |---core (my custom app specific)
+        |   |   |   |---css
+        |   |   |   |---img
+        |   |   |   |---js
+        |   |   |
+        |   |---templates
+        |   |   |---core (custom app specific)
+        |   |   |---<other app specific templates>
+        |   |   |---base.py (included basics of jquery and bootstrap)
+        |   |
+        |   |---.gitignore
+        |   |---manage.py
+        |   |---requirements.txt
+        |
+        |---media (folder created once items were uploaded)
+        |---db.sqlite3
+
+# Database export and import
+
+    * python manage.py dumpdata > database.json
+    * python manage.py loaddata database.json
+    * python manage.py dumpdata --exclude auth.permission --exclude contenttypes.contenttype --exclude sessions.session --exclude admin.logentry --indent 4 > data_base.json
